@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Shield, Eye, EyeOff, AlertCircle } from 'lucide-react'
-import { authApi } from '../services/api'
+import { Shield, Eye, EyeOff, AlertCircle, Sparkles } from 'lucide-react'
+import { authApi, DEMO_MODE } from '../services/api'
 import { useAuthStore } from '../store/authStore'
 
 export default function LoginPage() {
@@ -10,8 +10,8 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const setAuth = useAuthStore((s) => s.setAuth)
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@deudat.de')
+  const [password, setPassword] = useState('DsgvoAudit2024!')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -94,6 +94,19 @@ export default function LoginPage() {
             <span className="font-bold text-deudat-gray-900 text-xl">DSGVO-Audit Pro</span>
           </div>
 
+          {/* Demo banner */}
+          {DEMO_MODE && (
+            <div className="mb-6 p-4 bg-deudat-red/5 border border-deudat-red/20 rounded-xl flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-deudat-red flex-shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-deudat-red text-sm">Demo-Modus</div>
+                <div className="text-sm text-deudat-gray-600 mt-0.5">
+                  Sie sehen eine Live-Demo mit Beispieldaten. Zugangsdaten sind vorausgefüllt.
+                </div>
+              </div>
+            </div>
+          )}
+
           <h2 className="text-2xl font-bold text-deudat-gray-900 mb-1">
             {mode === 'login' ? t('loginTitle') : 'Konto erstellen'}
           </h2>
@@ -106,59 +119,25 @@ export default function LoginPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label">{t('firstName')}</label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="input"
-                    required
-                    placeholder="Max"
-                  />
+                  <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="input" required placeholder="Max" />
                 </div>
                 <div>
                   <label className="label">{t('lastName')}</label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="input"
-                    required
-                    placeholder="Mustermann"
-                  />
+                  <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="input" required placeholder="Mustermann" />
                 </div>
               </div>
             )}
 
             <div>
               <label className="label">{t('email')}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input"
-                required
-                placeholder="name@unternehmen.de"
-                autoComplete="email"
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" required placeholder="name@unternehmen.de" autoComplete="email" />
             </div>
 
             <div>
               <label className="label">{t('password')}</label>
               <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input pr-10"
-                  required
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-deudat-gray-400 hover:text-deudat-gray-600"
-                >
+                <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="input pr-10" required placeholder="••••••••" autoComplete="current-password" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-deudat-gray-400 hover:text-deudat-gray-600">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -178,34 +157,29 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  {t('loading')}
+                  Anmelden...
                 </span>
               ) : mode === 'login' ? t('login') : 'Registrieren'}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-deudat-gray-500">
-            {mode === 'login' ? (
-              <>
-                {t('noAccount')}{' '}
-                <button onClick={() => setMode('register')} className="text-deudat-red font-medium hover:underline">
-                  Registrieren
-                </button>
-              </>
-            ) : (
-              <>
-                {t('hasAccount')}{' '}
-                <button onClick={() => setMode('login')} className="text-deudat-red font-medium hover:underline">
-                  {t('login')}
-                </button>
-              </>
-            )}
-          </div>
-
-          {mode === 'login' && (
-            <div className="mt-4 p-4 bg-deudat-gray-50 rounded-xl text-sm text-deudat-gray-500">
-              <div className="font-medium text-deudat-gray-700 mb-1">Demo-Zugangsdaten:</div>
-              <div>admin@deudat.de · DsgvoAudit2024!</div>
+          {!DEMO_MODE && (
+            <div className="mt-6 text-center text-sm text-deudat-gray-500">
+              {mode === 'login' ? (
+                <>
+                  {t('noAccount')}{' '}
+                  <button onClick={() => setMode('register')} className="text-deudat-red font-medium hover:underline">
+                    Registrieren
+                  </button>
+                </>
+              ) : (
+                <>
+                  {t('hasAccount')}{' '}
+                  <button onClick={() => setMode('login')} className="text-deudat-red font-medium hover:underline">
+                    {t('login')}
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
