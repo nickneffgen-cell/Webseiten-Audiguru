@@ -132,8 +132,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <label className="label">{t('email')}</label>
-                  <input type="email" className="input" value={user?.email} disabled
-                    className="input bg-deudat-gray-50 cursor-not-allowed" />
+                  <input type="email" className="input bg-deudat-gray-50 cursor-not-allowed" value={user?.email} disabled />
                 </div>
                 <div>
                   <label className="label">Rolle</label>
